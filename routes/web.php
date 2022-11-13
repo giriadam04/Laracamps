@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\User\CheckoutController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,14 +18,24 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-Route::get('login',function (){
-    return view('login');
-})->name('login');
+//Backup Routes
+// Route::get('checkout/{camp:slug}', function () {
+// return view('checkout');
+// })->name('checkout');
 
-Route::get('checkout',function (){
-    return view('checkout');
-})->name('checkout');
+Route::get('checkout/{camp:slug}', [CheckoutController::class, 'create'])->name('checkout.create');
 
-Route::get('success_checkout',function (){
+Route::get('success_checkout', function () {
     return view('success_checkout');
 })->name('success_checkout');
+
+
+//socialite Routes
+Route::get('sign-in-google', [UserController::class, 'google'])->name('user.login.google');
+Route::get('auth/google/callback', [UserController::class, 'handleProviderCallback'])->name('auth.google.callback');
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+require __DIR__.'/auth.php';
